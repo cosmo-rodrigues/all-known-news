@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { Button } from './ui';
 
 export default function HomeButton({ locale }: { locale: string }) {
   const router = useRouter();
@@ -10,6 +11,8 @@ export default function HomeButton({ locale }: { locale: string }) {
   };
 
   return (
-    <button onClick={goToHome}>Home</button>
+    <Button variant="outline" onClick={goToHome}>
+      Back to home
+    </Button>
   );
 }

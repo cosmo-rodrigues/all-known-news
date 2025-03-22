@@ -1,0 +1,13 @@
+{
+  "Header": {
+    "labelFind": "Search",
+    "routes": {
+      "home": "Home",
+      "trends": "Trending",
+      "worldwide": "Worldwide",
+      "local": "Local",
+      "favorites": "Favorites"
+    },
+    "toggleTheme": "Toggle Theme"
+  }
+}

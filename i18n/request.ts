@@ -12,7 +12,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
   }
   
   const messages = {
-    ...(await import(`@/messages/${locale}/nav-menu.json`)).default,
+    ...(await import(`@/messages/${locale}/header-menu.json`)).default,
     ...(await import(`@/messages/${locale}/not-found.json`)).default,
   };
 

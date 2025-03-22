@@ -9,7 +9,7 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: 'All Known - News',
+  title: 'All at Once - News',
   description:
     'News aggregator application where you can know everything about everywhere all at once',
 };

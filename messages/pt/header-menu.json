@@ -1,0 +1,13 @@
+{
+  "Header": {
+    "labelFind": "Procurar",
+    "routes": {
+      "home": "Início",
+      "trends": "Em alta",
+      "worldwide": "Pelo mundo",
+      "local": "Local",
+      "favorites": "Favoritos"
+    },
+    "toggleTheme": "Thema umschalten"
+  }
+}
