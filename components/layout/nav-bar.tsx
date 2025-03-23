@@ -26,7 +26,7 @@ export const NavBar = ({
   underlineStyles,
   links,
 }: NavProps) => {
-  const t = useTranslations('Nav');
+  const t = useTranslations('Header');
   const localActive = useLocale();
   const path = usePathname();
 
