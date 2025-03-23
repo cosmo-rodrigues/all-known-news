@@ -1,7 +1,9 @@
 'use client';
 
 import { NewsFactory } from '@/service';
+import { usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import { FiltersComponent } from './filters-component';
 
 // Define the article interface
 interface Article {
@@ -14,8 +16,18 @@ interface Article {
   source_url: string;
 }
 
+const newsFactory = new NewsFactory(
+  process.env.NEXT_PUBLIC_NEWS_API_ORG_KEY,
+  process.env.NEXT_PUBLIC_NEWS_DATA_IO_KEY,
+  process.env.NEXT_PUBLIC_THE_GUARDIAN_KEY
+);
+
 // React component
 export const NewsList: React.FC = () => {
+  const path = usePathname();
+  const currentPath =
+    path.split('/')[1].length >= 3 ? path.split('/')[1] : 'home';
+
   const [articles, setArticles] = useState<Article[]>([]);
   const [filters, setFilters] = useState({
     q: 'AI',
@@ -26,12 +38,6 @@ export const NewsList: React.FC = () => {
     pageSize: 10,
   });
   const [loading, setLoading] = useState<boolean>(false);
-
-  const newsFactory = new NewsFactory(
-    process.env.NEXT_PUBLIC_NEWS_API_ORG_KEY,
-    process.env.NEXT_PUBLIC_NEWS_DATA_IO_KEY,
-    process.env.NEXT_PUBLIC_THE_GUARDIAN_KEY
-  );
 
   // Fetch articles when the "Search" button is clicked
   const loadArticles = async () => {
@@ -64,56 +70,6 @@ export const NewsList: React.FC = () => {
 
   return (
     <div>
-      <h1>News Aggregator</h1>
-
-      {/* Search Input */}
-      <input
-        type="text"
-        placeholder="Search for news..."
-        onChange={handleSearchChange}
-      />
-
-      {/* Filters */}
-      <div>
-        <label>
-          Country:
-          <select name="country" onChange={handleFilterChange}>
-            <option value="">All</option>
-            <option value="us">United States</option>
-            <option value="gb">United Kingdom</option>
-            <option value="in">India</option>
-            {/* Add more countries as needed */}
-          </select>
-        </label>
-
-        <label>
-          Category:
-          <select name="category" onChange={handleFilterChange}>
-            <option value="">All</option>
-            <option value="technology">Technology</option>
-            <option value="business">Business</option>
-            <option value="health">Health</option>
-            {/* Add more categories as needed */}
-          </select>
-        </label>
-
-        <label>
-          Language:
-          <select name="language" onChange={handleFilterChange}>
-            <option value="">All</option>
-            <option value="en">English</option>
-            <option value="es">Spanish</option>
-            <option value="fr">French</option>
-            {/* Add more languages as needed */}
-          </select>
-        </label>
-      </div>
-
-      {/* Search Button */}
-      <button onClick={loadArticles} disabled={loading}>
-        {loading ? 'Searching...' : 'Search'}
-      </button>
-
       {/* Loading State */}
       {loading && <p>Loading articles...</p>}
 

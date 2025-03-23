@@ -36,10 +36,6 @@ export const Header = ({ className, locale }: HeaderProps) => {
       href: `/${localActive}/local`,
       label: tHeader('routes.local'),
     },
-    {
-      href: `/${localActive}/favorites`,
-      label: tHeader('routes.favorites'),
-    },
   ];
 
   return (
@@ -52,17 +48,26 @@ export const Header = ({ className, locale }: HeaderProps) => {
             <Shad.SheetTrigger>
               <Menu className="h6 lg:hidden w-6" />
             </Shad.SheetTrigger>
-            <Shad.SheetContent side="left" className="w-[250px] sm:w-[400px]">
-              <nav className="flex flex-col gap-4">
+            <Shad.SheetHeader>
+              <Shad.SheetTitle hidden>Menu</Shad.SheetTitle>
+            </Shad.SheetHeader>
+
+            <Shad.SheetContent
+              side="left"
+              className="flex flex-col items-center justify-center w-[250px] sm:w-[400px]"
+            >
+              <nav className="flex flex-col items-center justify-center gap-4">
                 {routes.map((route, i) => (
-                  <Shad.Button asChild key={i} variant="ghost">
-                    <Link
-                      className="block px-2 py-1 uppercase"
-                      href={route.href}
-                    >
-                      {route.label}
-                    </Link>
-                  </Shad.Button>
+                  <Shad.SheetClose asChild>
+                    <Shad.Button asChild key={i} variant="ghost">
+                      <Link
+                        className="block px-2 py-1 uppercase"
+                        href={route.href}
+                      >
+                        {route.label}
+                      </Link>
+                    </Shad.Button>
+                  </Shad.SheetClose>
                 ))}
               </nav>
             </Shad.SheetContent>
@@ -85,21 +90,9 @@ export const Header = ({ className, locale }: HeaderProps) => {
         />
 
         <div className="flex items-center text-slate-500">
-          <Link href={`/${locale}/cart`} className="relative">
-            <Shad.Button
-              aria-label="Shopping Cart"
-              className="mr-2"
-              size="icon"
-              variant="ghost"
-            >
-              <Search />
-              <span className="sr-only">{tHeader('labelFind')}</span>
-            </Shad.Button>
-          </Link>
-
           <Shad.Button
             aria-label="Toggle theme"
-            className="mr-6 rounded-full"
+            className="mr-2 rounded-full"
             size="icon"
             variant="ghost"
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}

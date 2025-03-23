@@ -4,6 +4,9 @@ import { Roboto } from 'next/font/google';
 import { routing } from '@/i18n/routing';
 import { SearchProvider, ThemeProvider } from '@/components/context';
 import { Header } from '@/components/layout/header';
+import { StoreProvider } from '@/components/context/store-context/store-context';
+import { Hero } from '@/components/layout/hero';
+import { Suspense } from 'react';
 
 const roboto = Roboto({
   style: 'normal',
@@ -28,12 +31,16 @@ export default async function LocaleLayout({
       <body className={roboto.className} suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <NextIntlClientProvider locale={locale}>
-            <SearchProvider>
-              <main className="max-w-4xl mx-auto p-4">
-                <Header locale={locale} />
-                {children}
-              </main>
-            </SearchProvider>
+            <StoreProvider>
+              <SearchProvider>
+                <main className="max-w-4xl mx-auto p-4">
+                  <Header locale={locale} />
+                  <Suspense fallback="Loading...">
+                    <Hero>{children}</Hero>
+                  </Suspense>
+                </main>
+              </SearchProvider>
+            </StoreProvider>
           </NextIntlClientProvider>
         </ThemeProvider>
       </body>
