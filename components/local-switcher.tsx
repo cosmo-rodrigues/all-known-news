@@ -62,17 +62,17 @@ export default function LocalSwitcher() {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between"
+          className="hidden lg:flex justify-between"
         >
           {value
             ? availableLanguages.find((lang) => lang.value === value)?.label
-            : 'Select language...'}
+            : 'Select language'}
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent className="max-w-[150px]  p-0">
         <Command>
-          <CommandInput placeholder="Search language..." />
+          <CommandInput placeholder="Search language" />
           <CommandList>
             <CommandEmpty>No language found.</CommandEmpty>
             <CommandGroup>

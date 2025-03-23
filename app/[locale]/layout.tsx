@@ -2,8 +2,8 @@ import { NextIntlClientProvider, hasLocale } from 'next-intl';
 import { redirect } from 'next/navigation';
 import { Roboto } from 'next/font/google';
 import { routing } from '@/i18n/routing';
-import { Header } from '@/components/layout/header';
 import { SearchProvider, ThemeProvider } from '@/components/context';
+import { Header } from '@/components/layout/header';
 
 const roboto = Roboto({
   style: 'normal',

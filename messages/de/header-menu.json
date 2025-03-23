@@ -3,7 +3,6 @@
     "labelFind": "Suchen",
     "routes": {
       "home": "Startseite",
-      "trends": "Trends",
       "worldwide": "Weltweit",
       "local": "Lokal",
       "favorites": "Favoriten"
