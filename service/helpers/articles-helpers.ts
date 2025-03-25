@@ -19,6 +19,7 @@ export class NewsFactory {
 
   async searchArticles(
     query: string,
+    route?: string,
     filters?: {
       // Global search parameters
       searchIn?: string;

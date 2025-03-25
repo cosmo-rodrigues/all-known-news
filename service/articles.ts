@@ -19,7 +19,16 @@ export class NewsApiClient {
     });
   }
 
-  async searchEverything(query: string): Promise<NewsApiResponse> {
+  async searchEverything(
+    query: string,
+    route?: string
+  ): Promise<NewsApiResponse> {
+    const language =
+      route === currentLanguage()
+        ? currentLanguage()
+        : route === 'local'
+        ? currentLanguage()
+        : 'de,en,pt';
     const response: AxiosResponse<NewsApiResponse> = await this.axiosInstance
       .get('/everything', {
         params: {
@@ -28,7 +37,7 @@ export class NewsApiClient {
           sources: 'br,de,us',
           from: getTodayISODate(),
           to: getDateSevenDaysAgo(),
-          language: currentLanguage(),
+          language,
           sortBy: 'publishedAt',
           apiKey: this.apiKey,
         },
@@ -63,13 +72,22 @@ export class NewsDataIoClient {
     });
   }
 
-  async searchArticles(query: string): Promise<NewsDataIoResponse> {
+  async searchArticles(
+    query: string,
+    route?: string
+  ): Promise<NewsDataIoResponse> {
+    const language =
+      route === currentLanguage()
+        ? currentLanguage()
+        : route === 'local'
+        ? currentLanguage()
+        : 'de,en,pt';
     const response: AxiosResponse<NewsDataIoResponse> = await this.axiosInstance
       .get('/news', {
         params: {
           q: query,
           country: 'br,de,us',
-          language: currentLanguage(),
+          language,
           category: 'Entertainment,Science,Sports,Technology,Top',
           apikey: this.apiKey,
         },
@@ -96,13 +114,17 @@ export class GuardianClient {
     });
   }
 
-  async searchArticles(query: string): Promise<GuardianResponse> {
+  async searchArticles(
+    query: string,
+    route?: string
+  ): Promise<GuardianResponse> {
     const response: AxiosResponse<GuardianResponse> = await this.axiosInstance
       .get('/search', {
         params: {
           q: query,
           'from-date': getTodayISODate(),
-          section: 'business,development,education,technology',
+          to: getDateSevenDaysAgo(),
+          section: 'business,development,education,technology,health',
           'api-key': this.apiKey,
           'show-elements': 'image',
         },

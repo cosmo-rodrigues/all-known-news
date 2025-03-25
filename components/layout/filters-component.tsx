@@ -38,12 +38,11 @@ export const FiltersComponent = ({
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
 
   const handleSearch = () => {
-    fetchArticles(route, localFilters.q);
+    fetchArticles(localFilters.q, route);
   };
 
   const updateFilterCount = (filters: Filters) => {
     let count = 0;
-    if (filters.q) count++;
     if (filters.country) count += filters.country.split(',').length;
     if (filters.category) count += filters.category.split(',').length;
     if (filters.language) count += filters.language.split(',').length;
@@ -99,7 +98,7 @@ export const FiltersComponent = ({
     setSelectedLanguages([]);
     updateFilterCount(clearedFilters);
 
-    fetchArticles(route);
+    fetchArticles(clearedFilters.q, route);
   };
 
   return (

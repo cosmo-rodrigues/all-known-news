@@ -15,8 +15,8 @@ interface NewsStore {
   loading: boolean;
   error: string | null;
   fetchArticles: (
-    route: RouteKey | NormalizedRoute,
-    query?: string
+    query: string,
+    route: RouteKey | NormalizedRoute
   ) => Promise<void>;
   defaultFilters: {
     home: RouteFilters;
@@ -57,8 +57,9 @@ export const useNewsStore = create<NewsStore>((set, get) => ({
     },
   },
 
-  fetchArticles: async (route, query?: string) => {
+  fetchArticles: async (query: string, route: string) => {
     set({ loading: true, error: null });
+
     try {
       const normalizedRoute =
         ROUTES_NORMALIZER[route as RouteKey] || (route as NormalizedRoute);
@@ -67,12 +68,17 @@ export const useNewsStore = create<NewsStore>((set, get) => ({
 
       const defaultFilters = get().defaultFilters[normalizedRoute];
 
-      const data = await newsFactory.searchArticles(query ?? defaultFilters.q);
+      const data = await newsFactory.searchArticles(
+        query ?? defaultFilters.q,
+        route
+      );
 
       set({ articles: data, loading: false });
     } catch (error) {
       set({ error: 'Failed to fetch articles', loading: false });
       console.error('Error fetching articles:', error);
+    } finally {
+      set({ loading: false });
     }
   },
 
