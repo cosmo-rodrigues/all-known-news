@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/drawer';
 import { NormalizedRoute, RouteKey, useTranslatedOptions } from '@/constants';
 import { useNewsStore } from '@/store/news-store';
-import { useTranslations, type TranslationValues } from 'next-intl';
+import { useTranslations } from 'next-intl';
 
 export const FiltersComponent = ({
   route,
@@ -155,10 +155,10 @@ export const FiltersComponent = ({
                 {tFilters('category.title')}
               </label>
               <MultiSelect
-                options={countryOptions}
-                onValueChange={handleMultiSelectChange('country')}
-                defaultValue={selectedCountries}
-                placeholder={tFilters('country.placeholder')}
+                options={categoryOptions}
+                onValueChange={handleMultiSelectChange('category')}
+                defaultValue={selectedCategories}
+                placeholder={tFilters('category.placeholder')}
               />
             </div>
 
