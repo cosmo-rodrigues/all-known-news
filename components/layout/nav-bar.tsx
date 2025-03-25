@@ -6,8 +6,9 @@ import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 
 import { cn } from '@/lib/utils';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { HTMLAttributes } from 'react';
+import { NormalizedRoute, RouteKey, ROUTES_NORMALIZER } from '@/constants';
 
 interface NavProps extends HTMLAttributes<HTMLDivElement> {
   containerStyles: string;
@@ -28,12 +29,17 @@ export const NavBar = ({
 }: NavProps) => {
   const t = useTranslations('Header');
   const path = usePathname();
+  const localActive = useLocale();
 
   const selectedLink = (href: string) => {
     const currentPath = path.split('/').slice(-1)[0];
     const selectedLink = href.split('/').slice(-1)[0];
 
-    return currentPath === selectedLink;
+    const normalizedRoute =
+      ROUTES_NORMALIZER[currentPath as RouteKey] ||
+      (currentPath as NormalizedRoute);
+
+    return normalizedRoute === selectedLink;
   };
 
   return (

@@ -1,8 +1,11 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { Filters, useStore } from '../context/store-context/store-context';
 import { MultiSelect } from './multi-select';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import {
   Drawer,
   DrawerTrigger,
@@ -13,59 +16,90 @@ import {
   DrawerFooter,
 } from '@/components/ui/drawer';
 import { categoryOptions, countryOptions, languageOptions } from '@/constants';
+import { useNewsStore } from '@/store/news-store';
 
 export const FiltersComponent = ({ route }: { route: string }) => {
-  const { saveFilters, getFilters, removeFilters } = useStore();
-  const [localFilters, setLocalFilters] = useState<Filters>({});
+  const { removeFilters } = useStore();
+  const { getFiltersForRoute, fetchArticles } = useNewsStore();
+  const [localFilters, setLocalFilters] = useState<Filters>({} as Filters);
+  const [filterCount, setFilterCount] = useState(0);
+  // Add state for MultiSelect values
+  const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
 
-  // Initialize localFilters with saved filters for the route
   useEffect(() => {
-    const savedFilters = getFilters(route);
+    const savedFilters = getFiltersForRoute(route);
     setLocalFilters(savedFilters);
-  }, [route, getFilters]);
+    // Initialize MultiSelect values from saved filters
+    setSelectedCountries(savedFilters.country?.split(',') || []);
+    setSelectedCategories(savedFilters.category?.split(',') || []);
+    setSelectedLanguages(savedFilters.language?.split(',') || []);
+  }, [route, getFiltersForRoute]);
 
-  // Handle input changes for the search field
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setLocalFilters((prevFilters) => ({
-      ...prevFilters,
-      [name]: value,
-    }));
+  const handleSearch = () => {
+    fetchArticles(route, localFilters);
   };
 
-  // Handle Enter key press in the search input
+  const updateFilterCount = (filters: Filters) => {
+    let count = 0;
+    if (filters.q) count++;
+    if (filters.country) count += filters.country.split(',').length;
+    if (filters.category) count += filters.category.split(',').length;
+    if (filters.language) count += filters.language.split(',').length;
+    setFilterCount(count);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const newFilters = {
+      ...localFilters,
+      [name]: value,
+    };
+    setLocalFilters(newFilters);
+    updateFilterCount(newFilters);
+  };
+
+  const handleMultiSelectChange =
+    (name: string) => (selectedValues: string[]) => {
+      // Update the corresponding state for each MultiSelect
+      if (name === 'country') setSelectedCountries(selectedValues);
+      if (name === 'category') setSelectedCategories(selectedValues);
+      if (name === 'language') setSelectedLanguages(selectedValues);
+
+      const newFilters = {
+        ...localFilters,
+        [name]: selectedValues.join(','),
+      };
+      setLocalFilters(newFilters);
+      updateFilterCount(newFilters);
+    };
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      handleSearch(); // Trigger search
+      handleSearch();
     }
   };
 
-  // Handle changes for MultiSelect filters (country, category, language)
-  const handleMultiSelectChange =
-    (name: string) => (selectedValues: string[]) => {
-      setLocalFilters((prevFilters) => ({
-        ...prevFilters,
-        [name]: selectedValues.join(','), // Convert array to comma-separated string
-      }));
-    };
-
-  // Handle save button click
-  const handleSave = () => {
-    saveFilters(route, localFilters);
-    alert(`Filters saved for ${route}`);
-  };
-
-  // Handle search functionality
-  const handleSearch = () => {
-    // Perform search using the current filters
-    console.log('Searching with filters:', localFilters);
-    // Add your search logic here (e.g., fetch articles based on filters)
-  };
-
-  // Handle clear filters
   const handleClearFilters = () => {
+    // Clear all filters in the store
     removeFilters();
-    setLocalFilters({}); // Reset all filters
+
+    // Reset all local states
+    const clearedFilters = {
+      q: '',
+      country: '',
+      category: '',
+      language: '',
+    } as Filters;
+
+    setLocalFilters(clearedFilters);
+    setSelectedCountries([]);
+    setSelectedCategories([]);
+    setSelectedLanguages([]);
+    updateFilterCount(clearedFilters);
+
+    fetchArticles(route, clearedFilters);
   };
 
   return (
@@ -78,16 +112,26 @@ export const FiltersComponent = ({ route }: { route: string }) => {
           placeholder="Search for news..."
           value={localFilters.q || ''}
           onChange={handleInputChange}
-          onKeyDown={handleKeyDown} // Add this line
+          onKeyDown={handleKeyDown}
           className="w-full mr-2"
         />
         <Button onClick={handleSearch}>Find</Button>
       </div>
 
-      {/* Filters Drawer */}
+      {/* Filters Drawer with Badge */}
       <Drawer>
         <DrawerTrigger asChild>
-          <Button variant="outline">Filters</Button>
+          <Button variant="outline" className="relative">
+            Filters
+            {filterCount > 0 && (
+              <Badge
+                variant="destructive"
+                className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0"
+              >
+                {filterCount}
+              </Badge>
+            )}
+          </Button>
         </DrawerTrigger>
         <DrawerContent>
           <DrawerHeader>
@@ -103,7 +147,7 @@ export const FiltersComponent = ({ route }: { route: string }) => {
               <MultiSelect
                 options={countryOptions}
                 onValueChange={handleMultiSelectChange('country')}
-                defaultValue={localFilters.country?.split(',') || []}
+                defaultValue={selectedCountries}
                 placeholder="Select countries"
               />
             </div>
@@ -114,7 +158,7 @@ export const FiltersComponent = ({ route }: { route: string }) => {
               <MultiSelect
                 options={categoryOptions}
                 onValueChange={handleMultiSelectChange('category')}
-                defaultValue={localFilters.category?.split(',') || []}
+                defaultValue={selectedCategories}
                 placeholder="Select categories"
               />
             </div>
@@ -125,7 +169,7 @@ export const FiltersComponent = ({ route }: { route: string }) => {
               <MultiSelect
                 options={languageOptions}
                 onValueChange={handleMultiSelectChange('language')}
-                defaultValue={localFilters.language?.split(',') || []}
+                defaultValue={selectedLanguages}
                 placeholder="Select languages"
               />
             </div>

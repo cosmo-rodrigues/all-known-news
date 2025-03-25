@@ -15,8 +15,11 @@ export interface NewsDataIoArticle {
 }
 
 export interface NewsDataIoResponse {
+  code: string | undefined;
   results: NewsDataIoArticle[];
-  nextPage: string | null;
+  nextPage?: string | null;
+  status: string;
+  message: string;
 }
 
 // NewsAPI.org Response
@@ -38,9 +41,11 @@ export interface NewsApiArticle {
 }
 
 export interface NewsApiResponse {
-  status: string;
-  totalResults: number;
   articles: NewsApiArticle[];
+  code: string | undefined;
+  message: string;
+  totalResults?: number;
+  status: string;
 }
 
 // The Guardian Response
@@ -78,9 +83,11 @@ export interface GuardianArticle {
 
 export interface GuardianResponse {
   response: {
+    code: string | undefined;
     status: string;
-    total: number;
+    total?: number;
     results: GuardianArticle[];
+    message: string;
   };
 }
 
@@ -110,4 +117,14 @@ export interface SearchArticlesFilters {
   sortBy?: 'relevancy' | 'popularity' | 'publishedAt'; // sorting option
   pageSize?: number; // number of results per page
   page?: number; // page number
+}
+
+export interface Article {
+  title: string;
+  description: string | null;
+  url: string;
+  imageUrl: string | null;
+  publishedAt: string;
+  source_name: string;
+  source_url: string;
 }

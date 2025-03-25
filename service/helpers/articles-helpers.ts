@@ -18,6 +18,7 @@ export class NewsFactory {
   async searchArticles(
     query: string,
     filters: {
+      // Global search parameters
       searchIn?: string;
       sources?: string;
       domains?: string;
@@ -28,10 +29,13 @@ export class NewsFactory {
       sortBy?: 'relevancy' | 'popularity' | 'publishedAt';
       pageSize?: number;
       page?: number;
-      country?: string; // For NewsData.io
-      category?: string; // For NewsData.io and The Guardian
+      // Local search parameters
+      country?: string;
+      category?: string;
     }
   ) {
+    const isLocalSearch = !!filters.country || !!filters.category;
+
     const [newsApiResults, newsDataIoResults, guardianResults] =
       await Promise.all([
         this.newsApiClient.searchEverything(query, {

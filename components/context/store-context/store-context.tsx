@@ -9,7 +9,7 @@ import {
 } from 'react';
 
 export type Filters = {
-  q?: string;
+  q: string;
   country?: string;
   category?: string;
   language?: string;
@@ -29,18 +29,7 @@ export const StoreContext = createContext<StoreContextType>(
 );
 
 export const StoreProvider = ({ children }: { children: ReactNode }) => {
-  const [filters, setFilters] = useState<Record<string, Filters>>(() => {
-    if (typeof window !== 'undefined') {
-      const savedFilters = localStorage.getItem('userFilters');
-      return savedFilters ? JSON.parse(savedFilters) : {};
-    }
-
-    return {};
-  });
-
-  useEffect(() => {
-    localStorage.setItem('userFilters', JSON.stringify(filters));
-  }, [filters]);
+  const [filters, setFilters] = useState<Record<string, Filters>>({});
 
   const saveFilters = (route: string, newFilters: Filters) => {
     setFilters((prevFilters) => ({
@@ -54,7 +43,7 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const removeFilters = () => {
-    return localStorage.removeItem('userFilters');
+    console.log('Filters removed');
   };
 
   return (

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useEffect } from 'react'; // Add useEffect
 import { useLocale } from 'next-intl';
 import { usePathname, useRouter } from 'next/navigation';
 import { Check, ChevronsUpDown } from 'lucide-react';
@@ -42,9 +42,24 @@ export default function LocalSwitcher() {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState('');
 
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem('selectedLanguage');
+    if (
+      savedLanguage &&
+      availableLanguages.some((lang) => lang.value === savedLanguage)
+    ) {
+      setValue(savedLanguage);
+    } else {
+      setValue(localActive);
+    }
+  }, [localActive]);
+
   const onSelectChange = (selectedLanguage: string) => {
     setValue(selectedLanguage === value ? '' : selectedLanguage);
     setOpen(false);
+
+    localStorage.setItem('selectedLanguage', selectedLanguage);
+
     const currentPath = pathname.split('/')[2];
 
     startTransition(() => {
@@ -70,7 +85,7 @@ export default function LocalSwitcher() {
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="max-w-[150px]  p-0">
+      <PopoverContent className="max-w-[150px] p-0">
         <Command>
           <CommandInput placeholder="Search language" />
           <CommandList>

@@ -1,107 +1,43 @@
 'use client';
 
-import { NewsFactory } from '@/service';
+import { NewsCard } from './news-card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
-import { FiltersComponent } from './filters-component';
+import { useNewsStore } from '@/store/news-store';
 
-// Define the article interface
-interface Article {
-  title: string;
-  description: string | null;
-  url: string;
-  imageUrl: string | null;
-  publishedAt: string;
-  source_name: string;
-  source_url: string;
-}
-
-const newsFactory = new NewsFactory(
-  process.env.NEXT_PUBLIC_NEWS_API_ORG_KEY,
-  process.env.NEXT_PUBLIC_NEWS_DATA_IO_KEY,
-  process.env.NEXT_PUBLIC_THE_GUARDIAN_KEY
-);
-
-// React component
-export const NewsList: React.FC = () => {
-  const path = usePathname();
-  const currentPath =
-    path.split('/')[1].length >= 3 ? path.split('/')[1] : 'home';
-
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [filters, setFilters] = useState({
-    q: 'AI',
-    country: 'de',
-    category: 'technology',
-    language: 'en',
-    page: 1,
-    pageSize: 10,
-  });
-  const [loading, setLoading] = useState<boolean>(false);
-
-  // Fetch articles when the "Search" button is clicked
-  const loadArticles = async () => {
-    setLoading(true);
-    try {
-      // Fetch articles from all three APIs
-      const data = await newsFactory.searchArticles(filters.q, filters);
-      setArticles(data);
-    } catch (error) {
-      console.error('Failed to fetch articles:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Handle search input change
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFilters({ ...filters, q: e.target.value });
-  };
+export const NewsList = () => {
+  const pathname = usePathname();
+  const currentRoute = pathname.split('/')[1] || 'home';
+  const { articles, loading, fetchArticles } = useNewsStore();
 
   useEffect(() => {
-    (async () => await loadArticles())();
-  }, []);
+    fetchArticles(currentRoute);
+  }, [currentRoute, fetchArticles]);
 
-  // Handle filter changes
-  const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFilters({ ...filters, [name]: value });
-  };
+  if (loading) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {Array.from({ length: 6 }).map((_, index) => (
+          <Skeleton key={index} className="h-64 w-full rounded-lg" />
+        ))}
+      </div>
+    );
+  }
+
+  if (!articles.length) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p className="text-muted-foreground">No articles found</p>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      {/* Loading State */}
-      {loading && <p>Loading articles...</p>}
-
-      {/* Article List */}
-      <div>
-        {articles.map((article, index) => {
-          return (
-            <div
-              key={index}
-              style={{ marginBottom: '20px', borderBottom: '1px solid #ccc' }}
-            >
-              <h2>{article.title}</h2>
-              <p>{article.description}</p>
-              <a href={article.url} target="_blank" rel="noopener noreferrer">
-                Read more
-              </a>
-              {article.imageUrl && (
-                <img
-                  src={article.imageUrl}
-                  alt={article.title}
-                  style={{ maxWidth: '100%' }}
-                />
-              )}
-              <p>
-                Published on:{' '}
-                {new Date(article.publishedAt).toLocaleDateString()}
-              </p>
-              <p>Source: {article.source_name}</p>
-            </div>
-          );
-        })}
-      </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {articles.map((article, index) => (
+        <NewsCard key={`${article.source_name}-${index}`} article={article} />
+      ))}
     </div>
   );
 };

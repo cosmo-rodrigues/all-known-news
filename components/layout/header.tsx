@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 
 import * as Shad from '@/components/ui';
 import LocalSwitcher from '../local-switcher';
-import { HTMLAttributes } from 'react';
+import { HTMLAttributes, useEffect, useState } from 'react';
 import { NavBar } from './nav-bar';
 
 interface HeaderProps extends HTMLAttributes<HTMLDivElement> {
@@ -57,9 +57,9 @@ export const Header = ({ className, locale }: HeaderProps) => {
               className="flex flex-col items-center justify-center w-[250px] sm:w-[400px]"
             >
               <nav className="flex flex-col items-center justify-center gap-4">
-                {routes.map((route, i) => (
-                  <Shad.SheetClose asChild>
-                    <Shad.Button asChild key={i} variant="ghost">
+                {routes.map((route, index) => (
+                  <Shad.SheetClose asChild key={index}>
+                    <Shad.Button asChild variant="ghost">
                       <Link
                         className="block px-2 py-1 uppercase"
                         href={route.href}
@@ -73,7 +73,7 @@ export const Header = ({ className, locale }: HeaderProps) => {
             </Shad.SheetContent>
           </Shad.Sheet>
           <Link
-            href="/pt"
+            href={`/${localActive}`}
             className="ml-3 hidden sm:flex items-center justify-between"
           >
             <p className="text-primary text-2xl font-black">ALL </p>
