@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 
 import { cn } from '@/lib/utils';
-import { useLocale, useTranslations } from 'next-intl';
 import { HTMLAttributes } from 'react';
 import { NormalizedRoute, RouteKey, ROUTES_NORMALIZER } from '@/constants';
 
@@ -27,9 +26,7 @@ export const NavBar = ({
   underlineStyles,
   links,
 }: NavProps) => {
-  const t = useTranslations('Header');
   const path = usePathname();
-  const localActive = useLocale();
 
   const selectedLink = (href: string) => {
     const currentPath = path.split('/').slice(-1)[0];

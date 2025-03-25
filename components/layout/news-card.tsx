@@ -12,8 +12,8 @@ import { Article } from '@/types';
 export const NewsCard = ({ article }: { article: Article }) => {
   return (
     <Card className="h-full flex flex-col">
-      {article.imageUrl && (
-        <div className="relative h-48 w-full">
+      {article.imageUrl ? (
+        <div className="relative h-full-full -mt-[22px]">
           <Image
             src={article.imageUrl}
             alt={article.title}
@@ -22,6 +22,8 @@ export const NewsCard = ({ article }: { article: Article }) => {
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         </div>
+      ) : (
+        <div className="w-full min-w-[100px] h-full min-h-[50px]" />
       )}
       <CardHeader>
         <h3 className="text-lg font-semibold line-clamp-2">{article.title}</h3>

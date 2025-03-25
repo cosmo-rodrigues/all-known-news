@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Filters, useStore } from '../context/store-context/store-context';
 import { MultiSelect } from './multi-select';
 import { Input } from '@/components/ui/input';
@@ -15,30 +15,30 @@ import {
   DrawerDescription,
   DrawerFooter,
 } from '@/components/ui/drawer';
-import { categoryOptions, countryOptions, languageOptions } from '@/constants';
+import {
+  categoryOptions,
+  countryOptions,
+  languageOptions,
+  NormalizedRoute,
+  RouteKey,
+} from '@/constants';
 import { useNewsStore } from '@/store/news-store';
 
-export const FiltersComponent = ({ route }: { route: string }) => {
+export const FiltersComponent = ({
+  route,
+}: {
+  route: RouteKey | NormalizedRoute;
+}) => {
   const { removeFilters } = useStore();
-  const { getFiltersForRoute, fetchArticles } = useNewsStore();
+  const { fetchArticles } = useNewsStore();
   const [localFilters, setLocalFilters] = useState<Filters>({} as Filters);
   const [filterCount, setFilterCount] = useState(0);
-  // Add state for MultiSelect values
   const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
 
-  useEffect(() => {
-    const savedFilters = getFiltersForRoute(route);
-    setLocalFilters(savedFilters);
-    // Initialize MultiSelect values from saved filters
-    setSelectedCountries(savedFilters.country?.split(',') || []);
-    setSelectedCategories(savedFilters.category?.split(',') || []);
-    setSelectedLanguages(savedFilters.language?.split(',') || []);
-  }, [route, getFiltersForRoute]);
-
   const handleSearch = () => {
-    fetchArticles(route, localFilters);
+    fetchArticles(route, localFilters.q);
   };
 
   const updateFilterCount = (filters: Filters) => {
@@ -99,7 +99,7 @@ export const FiltersComponent = ({ route }: { route: string }) => {
     setSelectedLanguages([]);
     updateFilterCount(clearedFilters);
 
-    fetchArticles(route, clearedFilters);
+    fetchArticles(route);
   };
 
   return (

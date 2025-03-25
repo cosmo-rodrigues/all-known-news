@@ -4,13 +4,13 @@ import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { useLocale, useTranslations } from 'next-intl';
 
-import { Menu, Moon, Search, Sun } from 'lucide-react';
+import { Menu, Moon, Sun } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
 import * as Shad from '@/components/ui';
 import LocalSwitcher from '../local-switcher';
-import { HTMLAttributes, useEffect, useState } from 'react';
+import { HTMLAttributes } from 'react';
 import { NavBar } from './nav-bar';
 
 interface HeaderProps extends HTMLAttributes<HTMLDivElement> {
@@ -18,7 +18,7 @@ interface HeaderProps extends HTMLAttributes<HTMLDivElement> {
   locale: string;
 }
 
-export const Header = ({ className, locale }: HeaderProps) => {
+export const Header = ({ className }: HeaderProps) => {
   const { theme, setTheme } = useTheme();
   const tHeader = useTranslations('Header');
   const localActive = useLocale();

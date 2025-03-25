@@ -5,6 +5,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { useNewsStore } from '@/store/news-store';
+import { NormalizedRoute, RouteKey } from '@/constants';
 
 export const NewsList = () => {
   const pathname = usePathname();
@@ -12,7 +13,7 @@ export const NewsList = () => {
   const { articles, loading, fetchArticles } = useNewsStore();
 
   useEffect(() => {
-    fetchArticles(currentRoute);
+    fetchArticles(currentRoute as RouteKey | NormalizedRoute);
   }, [currentRoute, fetchArticles]);
 
   if (loading) {

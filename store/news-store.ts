@@ -16,10 +16,7 @@ interface NewsStore {
   error: string | null;
   fetchArticles: (
     route: RouteKey | NormalizedRoute,
-    filters?: Partial<RouteFilters> & {
-      page?: number;
-      pageSize?: number;
-    }
+    query?: string
   ) => Promise<void>;
   defaultFilters: {
     home: RouteFilters;
@@ -60,7 +57,7 @@ export const useNewsStore = create<NewsStore>((set, get) => ({
     },
   },
 
-  fetchArticles: async (route, filters) => {
+  fetchArticles: async (route, query?: string) => {
     set({ loading: true, error: null });
     try {
       const normalizedRoute =
@@ -70,18 +67,7 @@ export const useNewsStore = create<NewsStore>((set, get) => ({
 
       const defaultFilters = get().defaultFilters[normalizedRoute];
 
-      const mergedFilters = {
-        ...defaultFilters,
-        ...(filters || {}),
-      };
-
-      const data = await newsFactory.searchArticles(mergedFilters.q, {
-        country: mergedFilters.country,
-        category: mergedFilters.category,
-        language: mergedFilters.language,
-        page: mergedFilters.page,
-        pageSize: mergedFilters.pageSize,
-      });
+      const data = await newsFactory.searchArticles(query ?? defaultFilters.q);
 
       set({ articles: data, loading: false });
     } catch (error) {
@@ -91,7 +77,6 @@ export const useNewsStore = create<NewsStore>((set, get) => ({
   },
 
   getFiltersForRoute: (route) => {
-    // Normalize the route first
     const normalizedRoute =
       ROUTES_NORMALIZER[route as RouteKey] || (route as NormalizedRoute);
     return get().defaultFilters[normalizedRoute];

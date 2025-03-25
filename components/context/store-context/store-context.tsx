@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useState,
-  useEffect,
-} from 'react';
+import { createContext, ReactNode, useContext, useState } from 'react';
 
 export type Filters = {
   q: string;

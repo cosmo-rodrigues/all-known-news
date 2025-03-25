@@ -1,3 +1,5 @@
+// @ts-nocheck
+import { Article } from '@/types';
 import { GuardianClient, NewsApiClient, NewsDataIoClient } from '../articles';
 
 export class NewsFactory {
@@ -17,7 +19,7 @@ export class NewsFactory {
 
   async searchArticles(
     query: string,
-    filters: {
+    filters?: {
       // Global search parameters
       searchIn?: string;
       sources?: string;
@@ -34,67 +36,94 @@ export class NewsFactory {
       category?: string;
     }
   ) {
-    const isLocalSearch = !!filters.country || !!filters.category;
+    const results = await Promise.allSettled([
+      this.newsApiClient.searchEverything(query),
+      this.newsDataIoClient.searchArticles(query),
+      this.guardianClient.searchArticles(query),
+    ]);
 
-    const [newsApiResults, newsDataIoResults, guardianResults] =
-      await Promise.all([
-        this.newsApiClient.searchEverything(query, {
-          searchIn: filters.searchIn,
-          sources: filters.sources,
-          domains: filters.domains,
-          excludeDomains: filters.excludeDomains,
-          from: filters.from,
-          to: filters.to,
-          language: filters.language,
-          sortBy: filters.sortBy,
-          pageSize: filters.pageSize,
-          page: filters.page,
-        }),
-        this.newsDataIoClient.searchArticles(query, {
-          country: filters.country,
-          language: filters.language,
-          category: filters.category,
-        }),
-        this.guardianClient.searchArticles(query, {
-          'from-date': filters.from,
-          section: filters.category,
-        }),
-      ]);
+    // Process each result individually
+    const normalizedResults: Article[] = [];
 
-    // Normalize responses into a unified format
-    const normalizedResults = [
-      ...newsApiResults.articles?.map((article) => ({
-        title: article.title,
-        description: article.description,
-        url: article.url,
-        imageUrl: article.urlToImage,
-        publishedAt: article.publishedAt,
-        source: article.source.name,
+    // Helper function to normalize article formats
+    const normalizeArticle = (source: string) => (article: any) => {
+      const commonFields = {
+        title: article.title || article.webTitle || '',
+        description: article.description || '',
+        url: article.url || article.link || article.webUrl || '',
+        imageUrl:
+          article.urlToImage || article.image_url || article.imageUrl || '',
+        publishedAt:
+          article.publishedAt ||
+          article.pubDate ||
+          article.webPublicationDate ||
+          '',
+        source:
+          article.source?.name ||
+          article.publisher ||
+          article.sectionName ||
+          source,
         source_name: article.source_name,
         source_url: article.source_url,
-      })),
-      ...newsDataIoResults.results?.map((article) => ({
-        title: article.title,
-        description: article.description,
-        url: article.link,
-        imageUrl: article.image_url,
-        publishedAt: article.pubDate,
-        source: article.publisher,
-        source_name: article.source_name,
-        source_url: article.source_url,
-      })),
-      ...guardianResults.response.results?.map((article) => ({
-        title: article.webTitle,
-        description: '', // The Guardian API does not provide a description
-        url: article.webUrl,
-        imageUrl: article.imageUrl,
-        publishedAt: article.webPublicationDate,
-        source: article.sectionName,
-        source_name: article.source_name,
-        source_url: article.source_url,
-      })),
-    ];
+      };
+      return commonFields;
+    };
+
+    // Check each API result
+    results.forEach((result, index) => {
+      if (result.status === 'fulfilled') {
+        const data = result.value;
+        let articles: any[] = [];
+
+        // Extract articles based on the API response structure
+        switch (index) {
+          case 0: // NewsAPI
+            articles = data?.articles || [];
+            break;
+          case 1: // NewsData.io
+            articles = data?.results || [];
+            break;
+          case 2: // Guardian
+            articles = data?.response?.results || [];
+            break;
+        }
+
+        // Normalize and add to results
+        normalizedResults.push(
+          ...articles.map(
+            normalizeArticle(
+              index === 0
+                ? 'NewsAPI'
+                : index === 1
+                ? 'NewsData.io'
+                : 'The Guardian'
+            )
+          )
+        );
+      } else {
+        // Log the error but continue processing other results
+        console.error(`API call ${index} failed:`, result.reason);
+      }
+    });
 
     return normalizedResults;
   }
 }
+
+export const getTodayISODate = () => {
+  return new Date().toISOString().split('T')[0];
+};
+
+export const getDateSevenDaysAgo = () => {
+  const today = new Date();
+  const sevenDaysAgo = new Date(today);
+  sevenDaysAgo.setDate(today.getDate() - 7);
+
+  return sevenDaysAgo.toISOString().split('T')[0];
+};
+
+export const currentLanguage = () => {
+  const savedLanguage = localStorage.getItem('selectedLanguage');
+
+  return savedLanguage;
+};

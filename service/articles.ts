@@ -1,6 +1,11 @@
 // @ts-nocheck
 import { GuardianResponse, NewsApiResponse, NewsDataIoResponse } from '@/types';
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import {
+  currentLanguage,
+  getDateSevenDaysAgo,
+  getTodayISODate,
+} from './helpers';
 
 export class NewsApiClient {
   private axiosInstance: AxiosInstance;
@@ -14,35 +19,17 @@ export class NewsApiClient {
     });
   }
 
-  async searchEverything(
-    query: string,
-    filters: {
-      searchIn?: string;
-      sources?: string;
-      domains?: string;
-      excludeDomains?: string;
-      from?: string;
-      to?: string;
-      language?: string;
-      sortBy?: 'relevancy' | 'popularity' | 'publishedAt';
-      pageSize?: number;
-      page?: number;
-    }
-  ): Promise<NewsApiResponse> {
+  async searchEverything(query: string): Promise<NewsApiResponse> {
     const response: AxiosResponse<NewsApiResponse> = await this.axiosInstance
       .get('/everything', {
         params: {
           q: query,
-          searchIn: filters.searchIn,
-          sources: filters.sources,
-          domains: filters.domains,
-          excludeDomains: filters.excludeDomains,
-          from: filters.from,
-          to: filters.to,
-          language: filters.language,
-          sortBy: filters.sortBy,
-          pageSize: filters.pageSize,
-          page: filters.page,
+          searchIn: 'title,description,content',
+          sources: 'br,de,us',
+          from: getTodayISODate(),
+          to: getDateSevenDaysAgo(),
+          language: currentLanguage(),
+          sortBy: 'publishedAt',
           apiKey: this.apiKey,
         },
       })
@@ -76,19 +63,15 @@ export class NewsDataIoClient {
     });
   }
 
-  async searchArticles(
-    query: string,
-    filters: any
-  ): Promise<NewsDataIoResponse> {
+  async searchArticles(query: string): Promise<NewsDataIoResponse> {
     const response: AxiosResponse<NewsDataIoResponse> = await this.axiosInstance
       .get('/news', {
         params: {
           q: query,
-          country: filters.country,
-          language: filters.language,
-          category: filters.category,
+          country: 'br,de,us',
+          language: currentLanguage(),
+          category: 'Entertainment,Science,Sports,Technology,Top',
           apikey: this.apiKey,
-          ...filters,
         },
       })
       .catch(() => {
@@ -113,15 +96,14 @@ export class GuardianClient {
     });
   }
 
-  async searchArticles(query: string, filters: any): Promise<GuardianResponse> {
+  async searchArticles(query: string): Promise<GuardianResponse> {
     const response: AxiosResponse<GuardianResponse> = await this.axiosInstance
       .get('/search', {
         params: {
           q: query,
-          'from-date': filters.date,
-          section: filters.category,
+          'from-date': getTodayISODate(),
+          section: 'business,development,education,technology',
           'api-key': this.apiKey,
-          ...filters,
           'show-elements': 'image',
         },
       })
