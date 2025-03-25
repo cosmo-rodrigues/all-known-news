@@ -1,31 +1,27 @@
-export const countryOptions = [
-  { label: 'United States', value: 'us' },
-  { label: 'Germany', value: 'de' },
-  { label: 'Brazil', value: 'br' },
-];
+import { useTranslations } from 'next-intl';
 
-export const categoryOptions = [
-  { label: 'Business', value: 'business' },
-  { label: 'Crime', value: 'crime' },
-  { label: 'Domestic', value: 'domestic' },
-  { label: 'Education', value: 'education' },
-  { label: 'Entertainment', value: 'entertainment' },
-  { label: 'Environment', value: 'environment' },
-  { label: 'Food', value: 'food' },
-  { label: 'Health', value: 'health' },
-  { label: 'Lifestyle', value: 'lifestyle' },
-  { label: 'Other', value: 'other' },
-  { label: 'Politics', value: 'politics' },
-  { label: 'Science', value: 'science' },
-  { label: 'Sports', value: 'sports' },
-  { label: 'Technology', value: 'technology' },
-  { label: 'Top', value: 'top' },
-  { label: 'Tourism', value: 'tourism' },
-  { label: 'World', value: 'world' },
-];
+export const useTranslatedOptions = () => {
+  const t = useTranslations('Filters');
 
-export const languageOptions = [
-  { label: 'Deutsch', value: 'de' },
-  { label: 'English', value: 'en' },
-  { label: 'Português', value: 'pt' },
-];
+  const countryOptions = [
+    { label: t('country.us'), value: 'us' },
+    { label: t('country.de'), value: 'de' },
+    { label: t('country.br'), value: 'br' },
+  ];
+
+  const categoryOptions = [
+    { label: t('category.entertainment'), value: 'entertainment' },
+    { label: t('category.science'), value: 'science' },
+    { label: t('category.sports'), value: 'sports' },
+    { label: t('category.technology'), value: 'technology' },
+    { label: t('category.top'), value: 'top' },
+  ];
+
+  const languageOptions = [
+    { label: t('language.de'), value: 'de' },
+    { label: t('language.en'), value: 'en' },
+    { label: t('language.pt'), value: 'pt' },
+  ];
+
+  return { countryOptions, categoryOptions, languageOptions };
+};

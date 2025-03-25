@@ -1,5 +1,6 @@
 {
   "NotFound": {
-    "title": "Não encontrado"
+    "title": "Não encontrado",
+    "noArticlesFound": "Nenhum artigo encontrado"
   }
 }

@@ -15,14 +15,9 @@ import {
   DrawerDescription,
   DrawerFooter,
 } from '@/components/ui/drawer';
-import {
-  categoryOptions,
-  countryOptions,
-  languageOptions,
-  NormalizedRoute,
-  RouteKey,
-} from '@/constants';
+import { NormalizedRoute, RouteKey, useTranslatedOptions } from '@/constants';
 import { useNewsStore } from '@/store/news-store';
+import { useTranslations, type TranslationValues } from 'next-intl';
 
 export const FiltersComponent = ({
   route,
@@ -36,6 +31,9 @@ export const FiltersComponent = ({
   const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
+  const tFilters = useTranslations('Filters');
+  const { countryOptions, categoryOptions, languageOptions } =
+    useTranslatedOptions();
 
   const handleSearch = () => {
     fetchArticles(localFilters.q, route);
@@ -108,20 +106,20 @@ export const FiltersComponent = ({
         <Input
           type="text"
           name="q"
-          placeholder="Search for news..."
+          placeholder={tFilters('searchPlaceholder')}
           value={localFilters.q || ''}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           className="w-full mr-2"
         />
-        <Button onClick={handleSearch}>Find</Button>
+        <Button onClick={handleSearch}>{tFilters('findButton')}</Button>
       </div>
 
       {/* Filters Drawer with Badge */}
       <Drawer>
         <DrawerTrigger asChild>
           <Button variant="outline" className="relative">
-            Filters
+            {tFilters('filtersButton')}
             {filterCount > 0 && (
               <Badge
                 variant="destructive"
@@ -134,50 +132,54 @@ export const FiltersComponent = ({
         </DrawerTrigger>
         <DrawerContent>
           <DrawerHeader>
-            <DrawerTitle>Filters</DrawerTitle>
-            <DrawerDescription>
-              Select filters for your news feed.
-            </DrawerDescription>
+            <DrawerTitle>{tFilters('title')}</DrawerTitle>
+            <DrawerDescription>{tFilters('subTitle')}</DrawerDescription>
           </DrawerHeader>
           <div className="p-4 space-y-4">
             {/* Country Filter */}
             <div>
-              <label className="block text-sm font-medium mb-2">Country</label>
+              <label className="block text-sm font-medium mb-2">
+                {tFilters('country.title')}
+              </label>
               <MultiSelect
                 options={countryOptions}
                 onValueChange={handleMultiSelectChange('country')}
                 defaultValue={selectedCountries}
-                placeholder="Select countries"
+                placeholder={tFilters('country.placeholder')}
               />
             </div>
 
             {/* Category Filter */}
             <div>
-              <label className="block text-sm font-medium mb-2">Category</label>
+              <label className="block text-sm font-medium mb-2">
+                {tFilters('category.title')}
+              </label>
               <MultiSelect
-                options={categoryOptions}
-                onValueChange={handleMultiSelectChange('category')}
-                defaultValue={selectedCategories}
-                placeholder="Select categories"
+                options={countryOptions}
+                onValueChange={handleMultiSelectChange('country')}
+                defaultValue={selectedCountries}
+                placeholder={tFilters('country.placeholder')}
               />
             </div>
 
             {/* Language Filter */}
             <div>
-              <label className="block text-sm font-medium mb-2">Language</label>
+              <label className="block text-sm font-medium mb-2">
+                {tFilters('language.title')}
+              </label>
               <MultiSelect
                 options={languageOptions}
                 onValueChange={handleMultiSelectChange('language')}
                 defaultValue={selectedLanguages}
-                placeholder="Select languages"
+                placeholder={tFilters('language.placeholder')}
               />
             </div>
           </div>
           <DrawerFooter className="flex justify-between">
             <Button variant="outline" onClick={handleClearFilters}>
-              Clear Filters
+              {tFilters('clearFiltersButton')}
             </Button>
-            <Button onClick={handleSearch}>Search</Button>
+            <Button onClick={handleSearch}>{tFilters('findButton')}</Button>
           </DrawerFooter>
         </DrawerContent>
       </Drawer>

@@ -1,0 +1,33 @@
+{
+  "Filters": {
+    "title": "Filter",
+    "subTitle": "Wählen Sie Filter für Ihren Nachrichtenfeed aus.",
+    "findButton": "Suchen",
+    "filtersButton": "Filter",
+    "clearFiltersButton": "Filter zurücksetzen",
+    "searchPlaceholder": "Nach Nachrichten suchen...",
+    "country": {
+      "title": "Land",
+      "placeholder": "Länder auswählen",
+      "us": "Vereinigte Staaten",
+      "de": "Deutschland",
+      "br": "Brasilien"
+    },
+    "category": {
+      "title": "Kategorie",
+      "placeholder": "Kategorien auswählen",
+      "entertainment": "Unterhaltung",
+      "science": "Wissenschaft",
+      "sports": "Sport",
+      "technology": "Technologie",
+      "top": "Top"
+    },
+    "language": {
+      "title": "Sprache",
+      "placeholder": "Sprachen auswählen",
+      "de": "Deutsch",
+      "en": "Englisch",
+      "pt": "Portugiesisch"
+    }
+  }
+}

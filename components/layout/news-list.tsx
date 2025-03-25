@@ -3,9 +3,11 @@
 import { NewsCard } from './news-card';
 import { useNewsStore } from '@/store/news-store';
 import { Loading } from '../ui';
+import { useTranslations } from 'next-intl';
 
 export const NewsList = () => {
   const { articles, loading } = useNewsStore();
+  const tNotFound = useTranslations('NotFound');
 
   if (loading) {
     return (
@@ -18,7 +20,7 @@ export const NewsList = () => {
   if (!articles.length && !loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-muted-foreground">No articles found</p>
+        <p className="text-muted-foreground">{tNotFound('noArticlesFound')}</p>
       </div>
     );
   }

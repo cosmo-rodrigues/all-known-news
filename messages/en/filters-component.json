@@ -1,0 +1,33 @@
+{
+  "Filters": {
+    "title": "Filters",
+    "subTitle": "Select filters for your news feed.",
+    "findButton": "Find",
+    "filtersButton": "Filters",
+    "clearFiltersButton": "Clear Filters",
+    "searchPlaceholder": "Search for news...",
+    "country": {
+      "title": "Country",
+      "placeholder": "Select countries",
+      "us": "United States",
+      "de": "Germany",
+      "br": "Brazil"
+    },
+    "category": {
+      "title": "Category",
+      "placeholder": "Select categories",
+      "entertainment": "Entertainment",
+      "science": "Science",
+      "sports": "Sports",
+      "technology": "Technology",
+      "top": "Top"
+    },
+    "language": {
+      "title": "Language",
+      "placeholder": "Select languages",
+      "de": "Deutsch",
+      "en": "English",
+      "pt": "Português"
+    }
+  }
+}
